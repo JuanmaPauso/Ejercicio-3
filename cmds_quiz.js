@@ -14,6 +14,21 @@ exports.list = async(rl) => {
     );
 }
 
+// Show all scores including <id> and date
+exports.listScore = async(rl) => {
+
+    let quizzes = await Quiz.findAll({
+        include: [{
+            model: User,
+            as: 'author'
+        }]
+    });
+    let fecha = new Date();
+    quizzes.forEach(
+        q => rl.log(`  ${q.author.name}|X|${fecha.toUTCString()}`)
+    );
+}
+
 // Create quiz with <question> and <answer> in the DB
 exports.create = async(rl) => {
 
