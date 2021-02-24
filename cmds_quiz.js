@@ -56,7 +56,7 @@ exports.test = async(rl) => {
 // Play quiz ramdon
 exports.play = async(rl) => {
 
-
+    // Funcion para calcular el listado de preguntas de forma aleatoria
     function ramdonQuestion(min, max) {
         if (max > 0) {
             let rept = 0;
@@ -74,10 +74,12 @@ exports.play = async(rl) => {
             }
         }
     }
-
+    // Calculo de numero de preguntas
     let numberQuestions = await Quiz.count();
+    // Llamada a la funcion de preguntas aleatorias pasando el parametro que contiene el numero total
     ramdonQuestion(1, numberQuestions);
     let score = 0;
+    // for para iterar por todas las preguntas
     for (const n of orderQuestion) {
         let quiz = await Quiz.findByPk(Number(n));
         if (!quiz) throw new Error(`  Quiz '${n}' is not in DB`);
@@ -90,6 +92,7 @@ exports.play = async(rl) => {
 
         } else {
             rl.log(`  The answer "${answered}" is wrong!`);
+            // Cuando se responde mal automaticamente sales de la iteración
             break;
 
         }
