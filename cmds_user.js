@@ -17,7 +17,9 @@ exports.help = (rl) =>
     > uq | qu        ## quiz: update
     > dq | qd        ## quiz: delete
     >
-    > p              ## quiz: play random
+    > p              ## play random
+    >
+    > ls             ## List scores
     >
     > lf | fl | f    ## favourites: list all
     > cf | fc        ## favourite: create

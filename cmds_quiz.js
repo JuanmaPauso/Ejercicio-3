@@ -97,6 +97,7 @@ exports.play = async(rl) => {
 
         }
     };
+    // Mostrar la puntuación obtenida
     rl.log(`  Score: ${score}`);
 
 }
