@@ -11,21 +11,7 @@ module.exports = {
                     autoIncrement: true,
                     unique: true
                 },
-                wins: {
-                    type: Sequelize.INTEGER,
-                },
-                userId: {
-                    type: Sequelize.INTEGER,
-                    primaryKey: true,
-                    unique: "compositeKey",
-                    allowNull: false,
-                    references: {
-                        model: "Users",
-                        key: "id"
-                    },
-                    onUpdate: 'CASCADE',
-                    onDelete: 'CASCADE'
-                },
+                wins: Sequelize.INTEGER,
                 createdAt: {
                     type: Sequelize.DATE,
                     allowNull: false

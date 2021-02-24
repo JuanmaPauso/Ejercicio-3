@@ -46,12 +46,6 @@ Score.init({
     },
 }, { sequelize });
 
-Score.belongsTo(User, {
-    as: 'scores',
-    foreignKey: 'userId',
-    onDelete: 'CASCADE'
-});
-
 Quiz.belongsTo(User, {
     as: 'author',
     foreignKey: 'authorId',
@@ -74,6 +68,17 @@ Quiz.belongsToMany(User, {
     foreignKey: 'quizId',
     otherKey: 'userId',
     through: 'Favourites'
+});
+
+Score.belongsTo(User, {
+    as: 'user',
+    foreignKey: 'userId',
+    onDelete: 'CASCADE'
+});
+
+User.hasMany(Score, {
+    as: 'scores',
+    foreignKey: 'userId'
 });
 
 module.exports = sequelize;

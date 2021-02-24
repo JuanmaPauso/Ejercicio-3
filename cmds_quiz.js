@@ -1,4 +1,4 @@
-const { User, Quiz } = require("./model.js").models;
+const { User, Quiz, Score } = require("./model.js").models;
 
 // Show all quizzes in DB including <id> and <author>
 exports.list = async(rl) => {
@@ -17,15 +17,10 @@ exports.list = async(rl) => {
 // Show all scores including <id> and date
 exports.listScore = async(rl) => {
 
-    let quizzes = await Quiz.findAll({
-        include: [{
-            model: User,
-            as: 'author'
-        }]
-    });
+    let users = await User.findAll();
     let fecha = new Date();
-    quizzes.forEach(
-        q => rl.log(`  ${q.author.name}|X|${fecha.toUTCString()}`)
+    users.forEach(
+        u => rl.log(`  ${u.name}|x|${fecha.toUTCString()}`)
     );
 }
 
@@ -94,6 +89,10 @@ exports.play = async(rl) => {
     // Llamada a la funcion de preguntas aleatorias pasando el parametro que contiene el numero total
     ramdonQuestion(1, numberQuestions);
     let score = 0;
+    // introducir usuario
+    let name = await rl.questionP("Enter user");
+    let user = await User.findOne({ where: { name } });
+    if (!user) throw new Error(`User ('${name}') doesn't exist!`);
     // for para iterar por todas las preguntas
     for (const n of orderQuestion) {
         let quiz = await Quiz.findByPk(Number(n));
@@ -113,7 +112,11 @@ exports.play = async(rl) => {
         }
     };
     // Mostrar la puntuación obtenida
-    rl.log(`  Score: ${score}`);
+    rl.log(`  Score: ${score} of ${name}`);
+    let wins = await score;
+    await Score.create({
+        wins
+    });
 
 }
 
