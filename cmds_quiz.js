@@ -38,6 +38,8 @@ exports.create = async(rl) => {
 // Test (play) quiz identified by <id>
 exports.test = async(rl) => {
 
+
+
     let id = await rl.questionP("Enter quiz Id");
     let quiz = await Quiz.findByPk(Number(id));
     if (!quiz) throw new Error(`  Quiz '${id}' is not in DB`);
@@ -53,21 +55,47 @@ exports.test = async(rl) => {
 
 // Play quiz ramdon
 exports.play = async(rl) => {
-    let score = 0;
-    let id = await rl.questionP("Enter quiz Id");
-    let quiz = await Quiz.findByPk(Number(id));
-    if (!quiz) throw new Error(`  Quiz '${id}' is not in DB`);
 
-    let answered = await rl.questionP(quiz.question);
 
-    if (answered.toLowerCase().trim() === quiz.answer.toLowerCase().trim()) {
-        rl.log(`  The answer "${answered}" is right!`);
-        score++;
-        rl.log(`  Score: ${score}`);
-    } else {
-        rl.log(`  The answer "${answered}" is wrong!`);
-        rl.log(`  Score: ${score}`);
+    function ramdonQuestion(min, max) {
+        if (max > 0) {
+            let rept = 0;
+            let end = 0;
+            orderQuestion = [];
+            while (rept != -1) {
+                for (let i = 1; i <= max; i++) {
+                    let numberRamdon = Math.floor(Math.random() * (max + 1));
+                    if (orderQuestion.indexOf(numberRamdon) < 0 && numberRamdon != 0) {
+                        orderQuestion.push(numberRamdon);
+                        end++;
+                    }
+                    end == max ? rept = -1 : false;
+                }
+            }
+        }
     }
+
+    let numberQuestions = await Quiz.count();
+    ramdonQuestion(1, numberQuestions);
+    let score = 0;
+    for (const n of orderQuestion) {
+        let quiz = await Quiz.findByPk(Number(n));
+        if (!quiz) throw new Error(`  Quiz '${n}' is not in DB`);
+
+        let answered = await rl.questionP(quiz.question);
+
+        if (answered.toLowerCase().trim() === quiz.answer.toLowerCase().trim()) {
+            rl.log(`  The answer "${answered}" is right!`);
+            score++;
+
+        } else {
+            rl.log(`  The answer "${answered}" is wrong!`);
+            break;
+
+        }
+    };
+    rl.log(`  Score: ${score}`);
+
 }
 
 // Update quiz (identified by <id>) in the DB
