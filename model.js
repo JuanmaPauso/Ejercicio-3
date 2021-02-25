@@ -40,8 +40,7 @@ Score.init({
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-            isInt: true,
-            min: { args: [0], msg: "Wins: less than 0" },
+            min: { args: [0], msg: "Score: less than 0" }
         }
     },
 }, { sequelize });

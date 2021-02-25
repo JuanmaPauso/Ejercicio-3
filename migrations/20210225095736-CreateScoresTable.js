@@ -2,6 +2,7 @@
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
+
         return queryInterface.createTable(
             'Scores', {
                 id: {
@@ -11,7 +12,19 @@ module.exports = {
                     autoIncrement: true,
                     unique: true
                 },
-                wins: Sequelize.INTEGER,
+                wins: {
+                    type: Sequelize.INTEGER,
+                    allowNull: false
+                },
+                userId: {
+                    type: Sequelize.INTEGER,
+                    references: {
+                        model: "Users",
+                        key: "id"
+                    },
+                    onUpdate: 'CASCADE',
+                    onDelete: 'CASCADE'
+                },
                 createdAt: {
                     type: Sequelize.DATE,
                     allowNull: false
@@ -20,13 +33,11 @@ module.exports = {
                     type: Sequelize.DATE,
                     allowNull: false
                 }
-
             }, {
                 sync: { force: true }
             }
         );
     },
-
 
     down: (queryInterface, Sequelize) => {
         return queryInterface.dropTable('Scores');

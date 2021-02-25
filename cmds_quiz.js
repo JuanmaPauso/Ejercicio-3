@@ -17,10 +17,14 @@ exports.list = async(rl) => {
 // Show all scores including <id> and date
 exports.listScore = async(rl) => {
 
-    let users = await User.findAll();
-    let fecha = new Date();
-    users.forEach(
-        u => rl.log(`  ${u.name}|x|${fecha.toUTCString()}`)
+    let scores = await Score.findAll({
+        include: [{ model: User, as: 'user' }],
+        order: [
+            ["wins", "DESC"]
+        ]
+    });
+    scores.forEach(
+        s => rl.log(`  ${s.user.name}|${s.wins}|${s.createdAt.toUTCString()}`)
     );
 }
 
@@ -67,7 +71,7 @@ exports.test = async(rl) => {
 exports.play = async(rl) => {
 
     // Funcion para calcular el listado de preguntas de forma aleatoria
-    function ramdonQuestion(min, max) {
+    function ramdonQuestion(max) {
         if (max > 0) {
             let rept = 0;
             let end = 0;
@@ -87,12 +91,14 @@ exports.play = async(rl) => {
     // Calculo de numero de preguntas
     let numberQuestions = await Quiz.count();
     // Llamada a la funcion de preguntas aleatorias pasando el parametro que contiene el numero total
-    ramdonQuestion(1, numberQuestions);
+    ramdonQuestion(numberQuestions);
     let score = 0;
     // introducir usuario
     let name = await rl.questionP("Enter user");
     let user = await User.findOne({ where: { name } });
-    if (!user) throw new Error(`User ('${name}') doesn't exist!`);
+    if (!user) {
+        user = await User.create({ name, age: 0 });
+    }
     // for para iterar por todas las preguntas
     for (const n of orderQuestion) {
         let quiz = await Quiz.findByPk(Number(n));
@@ -112,10 +118,10 @@ exports.play = async(rl) => {
         }
     };
     // Mostrar la puntuación obtenida
-    rl.log(`  Score: ${score} of ${name}`);
-    let wins = await score;
+    rl.log(`  Score: ${score}`);
     await Score.create({
-        wins
+        wins: score,
+        userId: user.id
     });
 
 }
